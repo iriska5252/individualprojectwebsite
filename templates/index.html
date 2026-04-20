@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Bite-Art</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <h2>Преобразовать пароль</h2>
+    <form action="/encode" method="post">
+        <input type="text" name="password" placeholder="Введите пароль" required>
+        <button type="submit">Создать изображение</button>
+    </form>
+
+    <hr>
+
+    <h2>Преобразовать изображение</h2>
+    <form action="/decode" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/png" required>
+        <button type="submit">Извлечь пароль</button>
+    </form>
+</body>
+</html>
