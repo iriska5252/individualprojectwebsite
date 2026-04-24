@@ -20,7 +20,15 @@
             <input type="text" value="{{ decoded_password }}" placeholder="Здесь появится пароль" readonly>
 
             <label class="upload-box" for="image">
-                Выберите скачанное изображение
+                <span class="upload-title">Выберите скачанное изображение</span>
+                <img
+                    id="preview-image"
+                    class="preview-image {% if uploaded_image_data %}visible{% endif %}"
+                    {% if uploaded_image_data %}
+                        src="data:image/png;base64,{{ uploaded_image_data }}"
+                    {% endif %}
+                    alt="Предпросмотр выбранного изображения"
+                >
                 <input id="image" type="file" name="image" accept="image/png" required>
             </label>
 
@@ -31,5 +39,24 @@
             <p class="error-text">{{ error }}</p>
         {% endif %}
     </main>
+
+    <script>
+        const imageInput = document.getElementById('image');
+        const previewImage = document.getElementById('preview-image');
+
+        imageInput.addEventListener('change', (event) => {
+            const selectedFile = event.target.files[0];
+            if (!selectedFile) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (loadEvent) => {
+                previewImage.src = loadEvent.target.result;
+                previewImage.classList.add('visible');
+            };
+            reader.readAsDataURL(selectedFile);
+        });
+    </script>
 </body>
 </html>

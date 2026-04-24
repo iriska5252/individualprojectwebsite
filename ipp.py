@@ -14,6 +14,13 @@ def generate_color_from_hash(hash_value: str, index: int) -> tuple[int, int, int
     return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
 
 
+def marker_position(index: int) -> tuple[int, int]:
+    """Возвращает позицию пикселя-маркера в сетке 10x10."""
+    x = (index * 10) % 500
+    y = ((index * 10) // 500) * 10
+    return x, y
+
+
 def encode_password_to_image(password: str) -> bytes:
     """Кодирует пароль в PNG-изображение и возвращает байты файла."""
     password_hash = hashlib.sha256(password.encode()).hexdigest()
@@ -52,29 +59,44 @@ def encode_password_to_image(password: str) -> bytes:
                 )
 
     encoded = base64.b64encode(password.encode("utf-8"))
-    for idx, byte in enumerate(encoded):
-        x = (idx * 10) % 500
-        y = ((idx * 10) // 500) * 10
-        if y < 500:
-            color = (byte, 255 - byte, (byte * 2) % 255)
-            draw.rectangle([x, y, x + 5, y + 5], fill=color)
+    payload_len = len(encoded)
+
+    if payload_len > 2400:
+        raise ValueError("Пароль слишком длинный для кодирования")
+
+    length_hi, length_lo = divmod(payload_len, 256)
+    metadata = [length_hi, length_lo]
+
+    for marker_idx, value in enumerate(metadata):
+        x, y = marker_position(marker_idx)
+        color = (value, 255 - value, (value * 2) % 255)
+        draw.rectangle([x, y, x + 5, y + 5], fill=color)
+
+    for idx, byte in enumerate(encoded, start=2):
+        x, y = marker_position(idx)
+        color = (byte, 255 - byte, (byte * 2) % 255)
+        draw.rectangle([x, y, x + 5, y + 5], fill=color)
 
     img_io = io.BytesIO()
     img.save(img_io, format="PNG")
     return img_io.getvalue()
 
 
-def decode_image_to_password(image_file) -> str:
+def decode_image_to_password(image_bytes: bytes) -> str:
     """Декодирует пароль из изображения на основе записанных пикселей."""
-    img = Image.open(image_file).convert("RGB")
-    bytes_list = []
+    img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
-    for idx in range(0, 500, 10):
-        x = (idx * 10) % 500
-        y = ((idx * 10) // 500) * 10
-        if y < 500:
-            r, _g, _b = img.getpixel((x, y))
-            bytes_list.append(r)
+    length_hi, _g, _b = img.getpixel(marker_position(0))
+    length_lo, _g2, _b2 = img.getpixel(marker_position(1))
+    payload_len = length_hi * 256 + length_lo
+
+    if payload_len <= 0 or payload_len > 2400:
+        raise ValueError("Не удалось декодировать пароль из изображения")
+
+    bytes_list = []
+    for idx in range(2, 2 + payload_len):
+        r, _g3, _b3 = img.getpixel(marker_position(idx))
+        bytes_list.append(r)
 
     try:
         return base64.b64decode(bytes(bytes_list), validate=True).decode("utf-8")
@@ -108,18 +130,29 @@ def password_page():
 def image_page():
     password = ""
     error = None
+    uploaded_image_data = None
 
     if request.method == "POST":
         file = request.files.get("image")
         if not file:
             error = "Файл не выбран."
         else:
-            try:
-                password = decode_image_to_password(file)
-            except ValueError as exc:
-                error = str(exc)
+            image_bytes = file.read()
+            if not image_bytes:
+                error = "Файл пустой."
+            else:
+                uploaded_image_data = base64.b64encode(image_bytes).decode("utf-8")
+                try:
+                    password = decode_image_to_password(image_bytes)
+                except ValueError as exc:
+                    error = str(exc)
 
-    return render_template("image.html", decoded_password=password, error=error)
+    return render_template(
+        "image.html",
+        decoded_password=password,
+        uploaded_image_data=uploaded_image_data,
+        error=error,
+    )
 
 
 if __name__ == "__main__":
