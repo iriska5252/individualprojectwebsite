@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bite-Art — Преобразование изображения</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="nav-panel">
+        <a class="nav-btn" href="/">Home</a>
+        <a class="nav-btn" href="/password">Password</a>
+        <a class="nav-btn" href="/image">Image</a>
+    </nav>
+
+    <main class="page-main">
+        <h1>Преобразование изображения</h1>
+
+        <form class="card-form" action="/image" method="post" enctype="multipart/form-data">
+            <input type="text" value="{{ decoded_password }}" placeholder="Здесь появится пароль" readonly>
+
+            <label class="upload-box" for="image">
+                <span class="upload-title">Выберите скачанное изображение</span>
+                <img
+                    id="preview-image"
+                    class="preview-image {% if uploaded_image_data %}visible{% endif %}"
+                    {% if uploaded_image_data %}
+                        src="data:image/png;base64,{{ uploaded_image_data }}"
+                    {% endif %}
+                    alt="Предпросмотр выбранного изображения"
+                >
+                <input id="image" type="file" name="image" accept="image/png" required>
+            </label>
+
+            <button type="submit" class="main-btn">Готово</button>
+        </form>
+
+        {% if error %}
+            <p class="error-text">{{ error }}</p>
+        {% endif %}
+    </main>
+
+    <script>
+        const imageInput = document.getElementById('image');
+        const previewImage = document.getElementById('preview-image');
+
+        imageInput.addEventListener('change', (event) => {
+            const selectedFile = event.target.files[0];
+            if (!selectedFile) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (loadEvent) => {
+                previewImage.src = loadEvent.target.result;
+                previewImage.classList.add('visible');
+            };
+            reader.readAsDataURL(selectedFile);
+        });
+    </script>
+</body>
+</html>
