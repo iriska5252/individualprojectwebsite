@@ -32,31 +32,24 @@ def encode_password_to_image(password: str) -> io.BytesIO:
     
     for i in range(0, 500, cell_size):
         for j in range(0, 500, cell_size):
-            # Создаем уникальный индекс для каждой ячейки
             cell_index = (i // cell_size) * 10 + (j // cell_size)
             
-            # Основной цвет ячейки на основе хеша
             main_color = generate_color_from_hash(password_hash, cell_index)
             
-            # Рисуем прямоугольник с градиентом или узором
             for x in range(cell_size):
                 for y in range(cell_size):
-                    # Модифицируем цвет для создания градиента или текстуры
                     variation = (x + y) % 30
                     r = min(255, main_color[0] + variation - 15)
                     g = min(255, main_color[1] + variation - 15)
                     b = min(255, main_color[2] + variation - 15)
                     
-                    # Убеждаемся, что значения в пределах 0-255
                     r = max(0, min(255, r))
                     g = max(0, min(255, g))
                     b = max(0, min(255, b))
                     
                     draw.point((i + x, j + y), fill=(r, g, b))
             
-            # Добавляем случайные геометрические фигуры для разнообразия
             if random.random() > 0.7:
-                # Рисуем круг или овал
                 center_x = i + cell_size // 2
                 center_y = j + cell_size // 2
                 radius = cell_size // 4
