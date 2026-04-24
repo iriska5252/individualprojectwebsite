@@ -1,7 +1,129 @@
-*{
-    text-align: center;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
 }
 
 body {
-    background-color: rgb(200, 248, 248);
+    min-height: 100vh;
+    color: #ffffff;
+    /* Фоновые изображения для всех страниц загружайте в static/backgrounds/ и указывайте путь здесь. */
+    background: linear-gradient(160deg, #0b2b5a, #123f7a);
+}
+
+.nav-panel {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+.nav-btn {
+    text-decoration: none;
+    background: #ff8a00;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.home-main {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 70px;
+}
+
+.home-actions {
+    display: flex;
+    gap: 24px;
+}
+
+.main-btn {
+    display: inline-block;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    background: #0a2f64;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.page-main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 80px 20px 30px;
+}
+
+.card-form {
+    width: 100%;
+    max-width: 520px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.upload-box {
+    min-height: 260px;
+    background: #0a2f64;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 18px;
+    padding: 20px;
+}
+
+.upload-box input[type="file"] {
+    margin-top: 12px;
+}
+
+.result-card {
+    width: 100%;
+    max-width: 520px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.result-card img {
+    width: 260px;
+    border-radius: 12px;
+}
+
+.error-text {
+    color: #ffdddd;
+    background: rgba(255, 0, 0, 0.2);
+    padding: 10px 16px;
+    border-radius: 10px;
 }

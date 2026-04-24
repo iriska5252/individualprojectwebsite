@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bite-Art — Преобразование изображения</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="nav-panel">
+        <a class="nav-btn" href="/">Home</a>
+        <a class="nav-btn" href="/password">Password</a>
+        <a class="nav-btn" href="/image">Image</a>
+    </nav>
+
+    <main class="page-main">
+        <h1>Преобразование изображения</h1>
+
+        <form class="card-form" action="/image" method="post" enctype="multipart/form-data">
+            <input type="text" value="{{ decoded_password }}" placeholder="Здесь появится пароль" readonly>
+
+            <label class="upload-box" for="image">
+                Выберите скачанное изображение
+                <input id="image" type="file" name="image" accept="image/png" required>
+            </label>
+
+            <button type="submit" class="main-btn">Готово</button>
+        </form>
+
+        {% if error %}
+            <p class="error-text">{{ error }}</p>
+        {% endif %}
+    </main>
+</body>
+</html>
