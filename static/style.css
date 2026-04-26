@@ -9,7 +9,8 @@ body {
     min-height: 100vh;
     color: #ffffff;
     /* Фоновые изображения для всех страниц загружайте в static/backgrounds/ и указывайте путь здесь. */
-    background: linear-gradient(160deg, #0b2b5a, #123f7a);
+    background: url("/static/Images/previu.jpg") no-repeat center;
+    background-size: cover;
 }
 
 .nav-panel {
